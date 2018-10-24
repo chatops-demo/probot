@@ -6,6 +6,7 @@
 const axios = require('axios')
 var headers = {
   'Authorization': 'Bearer BS56HSTI0Gg.cwA.0RQ.DNUpHj8F_ogArX5rb-0FIvmiXCF88twU52ccbvCgrQU',
+  'Content-Type': 'application/json'
   'cache-control': 'no-cache'
 }
 
