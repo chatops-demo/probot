@@ -2,41 +2,51 @@
  * This is the entry point for your Probot App.
  * @param {import('probot').Application} app - Probot's Application class.
  */
-//var request = require('request')
-var request = require('request')
-//const axios = requite('axios')
 
-var options = { method: 'POST',
-  url: 'https://directline.botframework.com/v3/directline/conversations',
-  headers:
-   { 'Authorization': 'Bearer BS56HSTI0Gg.cwA.0RQ.DNUpHj8F_ogArX5rb-0FIvmiXCF88twU52ccbvCgrQU',
-     'cache-control': 'no-cache' } };
+const axios = require('axios')
+var headers = {
+  'Authorization': 'Bearer BS56HSTI0Gg.cwA.0RQ.DNUpHj8F_ogArX5rb-0FIvmiXCF88twU52ccbvCgrQU',
+  'cache-control': 'no-cache'
+}
 
 module.exports = app => {
-  // Your code here
+  // When an issue is opened run the code below
   app.on('issues.opened', async context => {
     const issueComment = context.issue({ body: 'Thanks for opening this issue!' })
-    request(options, function (error, response, body) {
-      if (error) throw new Error(error);
-      console.log(JSON.parse(body)['conversationId']);
-      var url = 'https://directline.botframework.com/v3/directline/conversations/' + JSON.parse(body)['conversationId'] + '/activities';
+    // Start a conversation
+    axios({
+      method: 'post',
+      url: 'https://directline.botframework.com/v3/directline/conversations',
+      headers: {
+          'Authorization': 'Bearer BS56HSTI0Gg.cwA.0RQ.DNUpHj8F_ogArX5rb-0FIvmiXCF88twU52ccbvCgrQU',
+          'cache-control': 'no-cache'
+      }
+    })
+    .then(function (response) {
+      // Output current conversation ID
+      console.log(response.data.conversationId)
+      var data = {
+        'type': 'message',
+        'from': {
+          'id': 'probot'
+        },
+        'text': 'hello'
+      }
+      // Build up url for sending conversation information
+      var url = 'https://directline.botframework.com/v3/directline/conversations/' + response.data.conversationId + '/activities';
       console.log(url)
-      //request({
-      //  method: 'POST',
-      //  url: 'https://directline.botframework.com/v3/directline/conversations/' + JSON.parse(body)['conversationId'] + '/activities',
-      //  headers:
-      //    { 'Authorization': 'Bearer BS56HSTI0Gg.cwA.0RQ.DNUpHj8F_ogArX5rb-0FIvmiXCF88twU52ccbvCgrQU',
-      //      'cache-control': 'no-cache' },
-      //  body:
-      //    {
-      //      "type": "message",
-      //      "text": "here is text"
-      //    }
-      //}, function (error, response, body) {
-      //  if (error) throw new Error(error);
-      //  console.log(body);
-      //});
-    });
+      // Post new information for the current conversation ID
+      //axios.post(url, data, headers)
+      //  .then(function (response) {
+      //    console.log(response)
+      //  })
+      //  .catch(function (error) {
+      //    console.log(error)
+      //  })
+    })
+    .catch(function (error) {
+      console.log(error)
+    })
     return context.github.issues.createComment(issueComment)
   })
 
