@@ -27,11 +27,11 @@ module.exports = app => {
       // Output current conversation ID
       console.log(response.data.conversationId)
       var data = {
-        'type': 'message',
-        'from': {
-          'id': 'probot'
+        "type": "message",
+        "from": {
+          "id": "probot"
         },
-        'text': 'hello'
+        "text": "hello"
       }
       // Build up url for sending conversation information
       var url = 'https://directline.botframework.com/v3/directline/conversations/' + response.data.conversationId + '/activities';
