@@ -14,4 +14,10 @@ steps:
 
 - script: |
     npm install
+  workingDirectory: dow-dev-probot
   displayName: 'npm install'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(System.DefaultWorkingDirectory)/dow-dev-probot'
+    artifactName: 'drop'
