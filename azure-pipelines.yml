@@ -17,7 +17,14 @@ steps:
   workingDirectory: dow-dev-probot
   displayName: 'npm install'
 
-- task: PublishBuildArtifacts@1
+- task: CopyFiles@2
   inputs:
-    PathtoPublish: '$(System.DefaultWorkingDirectory)/dow-dev-probot'
-    artifactName: 'drop'
+    SourceFolder: '$(System.DefaultWorkingDirectory)/dow-dev-probot'
+    Contents: |
+      **\*.js
+      package.json
+      .env
+      app.yml
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+- task: PublishBuildArtifacts@1
