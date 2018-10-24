@@ -15,16 +15,22 @@ _axios.defaults.headers.common['Authorization'] = 'Bearer BS56HSTI0Gg.cwA.0RQ.DN
 
 module.exports = app => {
   // When an issue is opened run the code below
+  const router = app.route('/dow-dev-probot')
+  router.use(require('express').static('public'))
 
+  router.post('/new-issue', async (req, res) => {
+    res.send('Hello World, this posted')
+    const github = await app.auth(407675);
+    github.issues.create({
+      "title": "A bug from probot",
+      "body": "probot is posting a bug",
+      "repo": "fake-app",
+      "owner": "chatops-demo"
+    })
+  })
 
   app.on('issues.opened', async context => {
-    //console.log(context.payload.issue);
-    //console.log(context.payload.issue.title);
-    //console.log(context.payload.issue.user.login);
-    //console.log(context.payload.repository.name);
-    //console.log(context.payload.issue.url);
-    //console.log(context.payload.issue.number);
-    //console.log(context.payload.issue.body)
+
     const issueComment = context.issue({ body: 'Thanks for opening this issue!' })
     // Start a conversation
 
