@@ -4,6 +4,8 @@
  */
 
 const axios = require('axios')
+const express = require('express')
+//const octokit = require('@octokit/rest')
 
 var _axios = axios.create({
   baseURL: 'https://directline.botframework.com/v3/directline/',
@@ -13,7 +15,16 @@ _axios.defaults.headers.common['Authorization'] = 'Bearer BS56HSTI0Gg.cwA.0RQ.DN
 
 module.exports = app => {
   // When an issue is opened run the code below
+
+
   app.on('issues.opened', async context => {
+    //console.log(context.payload.issue);
+    //console.log(context.payload.issue.title);
+    //console.log(context.payload.issue.user.login);
+    //console.log(context.payload.repository.name);
+    //console.log(context.payload.issue.url);
+    //console.log(context.payload.issue.number);
+    //console.log(context.payload.issue.body)
     const issueComment = context.issue({ body: 'Thanks for opening this issue!' })
     // Start a conversation
 
@@ -22,10 +33,24 @@ module.exports = app => {
         console.log('Create conversation?', result.statusText, result.data)
         _axios.post('conversations/' + result.data.conversationId + '/activities', {
             type: 'message',
-            from: {
+            from:
+              {
                 id: 'probot'
-            },
-            text: 'issue;{ repo: "name", issueId: "56", issueTitle: "Doesnt work in IE8", issueBody: "Your app sucks" }'
+              },
+            text:
+              JSON.stringify(
+                {
+                  issue:
+                    {
+                      'repo': context.payload.repository.name,
+                      'issueNumber': context.payload.issue.number,
+                      'issueTitle': context.payload.issue.title,
+                      'issueBody': context.payload.issue.body,
+                      'issueURL': context.payload.issue.url,
+                      'createdByUser': context.payload.issue.user.login
+                    }
+                })
+            //'issue;{ repo: "name", issueId: "56", issueTitle: "Doesnt work in IE8", issueBody: "Your app sucks" }'
         })
           .then(result => {
             console.log('Send activity?', result.statusText, result.data)
